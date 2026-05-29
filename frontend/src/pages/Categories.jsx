@@ -98,6 +98,7 @@ export default function Categories() {
   const [loading, setLoading]           = useState(true);
   const [sidebarOpen, setSidebarOpen]   = useState(false);
   const [viewMode, setViewMode]         = useState("grid"); // grid | list
+  const [isSortOpen,    setIsSortOpen]    = useState(false); // New state for sort dropdown
   const searchRef                       = useRef(null);
 
   /* filter state */
@@ -114,6 +115,7 @@ export default function Categories() {
   const [newArrivals,   setNewArrivals]   = useState(false);
   const [sortBy,        setSortBy]        = useState(searchParams.get("sort")   || "default");
   const [page,          setPage]          = useState(1);
+  const sortDropdownRef                 = useRef(null); // New ref for sort dropdown
   const PER_PAGE = 12;
 
   /* fetch */
@@ -154,6 +156,17 @@ export default function Categories() {
     setSearchParams(params, { replace: true });
     setPage(1);
   }, [search, genderTab, priceRange, minDiscount, selectedSizes, sortBy]);
+
+  /* click outside for sort dropdown */
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target)) {
+        setIsSortOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   /* filtering */
   const filtered = useCallback(() => {
@@ -467,6 +480,10 @@ export default function Categories() {
       <Navbar />
 
       <style>{`
+        @keyframes dropdownScale {
+          0%   { opacity: 0; transform: scale(0.95) translateY(-10px); }
+          100% { opacity: 1; transform: scale(1)    translateY(0); }
+        }
         @keyframes catReveal { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
         .cat-product-card { animation: catReveal 0.4s ease both; }
         .cat-product-card:hover .cat-overlay { opacity:1 !important; }
@@ -480,8 +497,10 @@ export default function Categories() {
         .list-card:hover img { transform:scale(1.04); }
 
         /* mobile drawer */
-        .cat-drawer { position:fixed; top:0; left:-320px; height:100vh; width:min(300px,85vw); z-index:1200; background:var(--bg-2); overflow-y:auto; padding:1.5rem; border-right:1px solid var(--border); transition:left 0.32s cubic-bezier(0.4,0,0.2,1); }
-        .cat-drawer.open { left:0; }
+        .cat-drawer { position:fixed; top:0; left:0; transform:translateX(-100%); height:100vh; width:min(300px,85vw); z-index:1200; background:var(--bg-2); overflow-y:auto; padding:1.5rem; border-right:1px solid var(--border); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1), box-shadow 0.35s ease; box-shadow:none; }
+        .cat-drawer.open { transform:translateX(0); box-shadow: 20px 0 80px rgba(0,0,0,0.6); }
+        .cat-drawer-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(4px); z-index:1100; opacity:0; pointer-events:none; transition:opacity 0.35s ease; }
+        .cat-drawer-overlay.open { opacity:1; pointer-events:auto; }
 
         @media(max-width:1000px) {
           .cat-sidebar-desktop { display:none!important; }
@@ -498,9 +517,7 @@ export default function Categories() {
       <div style={{ minHeight: "calc(100vh - 68px)", background: "var(--bg)" }}>
 
         {/* ── Mobile drawer overlay ── */}
-        {sidebarOpen && (
-          <div onClick={() => setSidebarOpen(false)} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.65)", backdropFilter:"blur(4px)", zIndex:1100 }} />
-        )}
+        <div className={`cat-drawer-overlay${sidebarOpen ? " open" : ""}`} onClick={() => setSidebarOpen(false)} />
         <div className={`cat-drawer${sidebarOpen ? " open" : ""}`}>
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"1rem" }}>
             <span style={{ fontFamily:"'Cormorant Garamond', serif", fontSize:"1.3rem", fontWeight:600, color:"var(--rose)" }}>Filters</span>
@@ -573,11 +590,47 @@ export default function Categories() {
               </span>
 
               {/* Sort dropdown */}
-              <div style={{ display:"flex", alignItems:"center", gap:"0.5rem" }}>
+              <div style={{ display:"flex", alignItems:"center", gap:"0.5rem", position:"relative", zIndex: 10 }} ref={sortDropdownRef}>
                 <span style={{ fontSize:"0.76rem", color:"var(--text-3)", whiteSpace:"nowrap" }}>Sort</span>
-                <select value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:"8px", color:"var(--text)", padding:"0.45rem 0.75rem", fontFamily:"'Outfit', sans-serif", fontSize:"0.83rem", cursor:"pointer", outline:"none" }}>
-                  {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
+                <div
+                  onClick={() => setIsSortOpen(o => !o)}
+                  style={{
+                    background: "var(--surface)", border: `1px solid ${isSortOpen ? 'var(--rose)' : 'var(--border)'}`,
+                    borderRadius: "8px", color: "var(--text)", padding: "0.45rem 0.75rem",
+                    fontFamily: "'Outfit', sans-serif", fontSize: "0.83rem", cursor: "pointer",
+                    outline: "none", display: "flex", alignItems: "center", gap: "0.5rem",
+                    minWidth: 160, justifyContent: "space-between"
+                  }}
+                >
+                  <span>{SORT_OPTIONS.find(o => o.value === sortBy)?.label || "Featured"}</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isSortOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </div>
+
+                {isSortOpen && (
+                  <ul style={{
+                    position: "absolute", top: "100%", right: 0, marginTop: "0.4rem",
+                    background: "var(--bg-3)", border: "1px solid var(--border)",
+                    borderRadius: "10px", padding: "0.4rem", listStyle: "none",
+                    width: "100%", minWidth: 200,
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+                    animation: "dropdownScale 0.2s ease-out forwards", transformOrigin: "top right"
+                  }}>
+                    {SORT_OPTIONS.map(o => (
+                      <li key={o.value}
+                        onClick={() => { setSortBy(o.value); setPage(1); setIsSortOpen(false); }}
+                        style={{
+                          padding: "0.6rem 0.8rem", borderRadius: "6px",
+                          color: sortBy === o.value ? "var(--rose)" : "var(--text-2)",
+                          background: sortBy === o.value ? "var(--rose-dim)" : "transparent",
+                          cursor: "pointer", transition: "all 0.2s",
+                          fontSize: "0.85rem", fontWeight: sortBy === o.value ? 600 : 400
+                        }}
+                      >{o.label}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               {/* View toggle */}
@@ -606,7 +659,21 @@ export default function Categories() {
             {/* ── Products ── */}
             {loading ? (
               <div className="cat-grid" style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:"1.2rem" }}>
-                {Array.from({length:8}).map((_,i) => <div key={i} className="skeleton" style={{ height:320, borderRadius:14 }} />)}
+                {Array.from({length:8}).map((_,i) => (
+                  <div key={i} className="product-card" style={{ display: "flex", flexDirection: "column", padding: 0, height: "100%", minHeight: 380, border: "1px solid var(--glass-border)", background: "var(--glass-1)" }}>
+                    <div className="skeleton" style={{ height: 260, width: "100%", borderRadius: "var(--radius-xl) var(--radius-xl) 0 0" }} />
+                    <div style={{ padding: "1.1rem", display: "flex", flexDirection: "column", gap: "0.6rem", flex: 1 }}>
+                      <div className="skeleton" style={{ height: 12, width: "30%", borderRadius: 4 }} />
+                      <div className="skeleton" style={{ height: 20, width: "80%", borderRadius: 4 }} />
+                      <div className="skeleton" style={{ height: 14, width: "100%", borderRadius: 4 }} />
+                      <div className="skeleton" style={{ height: 14, width: "60%", borderRadius: 4 }} />
+                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "auto", paddingTop: "1rem" }}>
+                        <div className="skeleton" style={{ height: 20, width: "40%", borderRadius: 4 }} />
+                        <div className="skeleton" style={{ height: 20, width: "20%", borderRadius: 4 }} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : paginated.length === 0 ? (
               <div className="empty-state">
@@ -708,9 +775,15 @@ export default function Categories() {
 
             {/* ── Pagination ── */}
             {totalPages > 1 && (
-              <div style={{ display:"flex", justifyContent:"center", alignItems:"center", gap:"0.4rem", marginTop:"2.5rem", flexWrap:"wrap" }}>
-                <button onClick={() => { setPage(1); window.scrollTo(0,0); }} disabled={page===1} className="btn btn-ghost btn-sm" style={{ fontSize:"0.76rem" }}>« First</button>
-                <button onClick={() => { setPage(p => Math.max(1,p-1)); window.scrollTo(0,0); }} disabled={page===1} className="btn btn-ghost btn-sm">Prev</button>
+              <div style={{
+                display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem",
+                flexWrap: "wrap", padding: "0.75rem 1rem",
+                background: "var(--glass-1)", border: "1px solid var(--glass-border)",
+                borderRadius: "var(--radius-pill)", backdropFilter: "blur(12px)",
+                width: "fit-content", margin: "3.5rem auto 0", boxShadow: "var(--shadow-sm)"
+              }}>
+                <button onClick={() => { setPage(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }} disabled={page === 1} className="btn btn-ghost btn-sm" style={{ borderRadius: "var(--radius-pill)", padding: "0.4rem 0.8rem", fontSize: "0.76rem" }}>«</button>
+                <button onClick={() => { setPage(p => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }} disabled={page === 1} className="btn btn-ghost btn-sm" style={{ borderRadius: "var(--radius-pill)", padding: "0.4rem 1rem" }}>‹ Prev</button>
 
                 {Array.from({length:Math.min(7,totalPages)},(_,i) => {
                   let num;
@@ -720,12 +793,19 @@ export default function Categories() {
                   else                           num = page-3+i;
                   if (num<1||num>totalPages) return null;
                   return (
-                    <button key={num} onClick={() => { setPage(num); window.scrollTo(0,0); }} className={`btn btn-sm ${page===num?"btn-rose":"btn-ghost"}`} style={{ width:36,height:36,padding:0,justifyContent:"center" }}>{num}</button>
+                    <button
+                      key={num}
+                      onClick={() => { setPage(num); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      className={`btn btn-sm ${page === num ? "btn-rose" : "btn-ghost"}`}
+                      style={{ width: 36, height: 36, padding: 0, justifyContent: "center", borderRadius: "50%", fontWeight: page === num ? 700 : 500, transition: "all var(--spring)" }}
+                    >
+                      {num}
+                    </button>
                   );
                 })}
 
-                <button onClick={() => { setPage(p => Math.min(totalPages,p+1)); window.scrollTo(0,0); }} disabled={page===totalPages} className="btn btn-ghost btn-sm">Next</button>
-                <button onClick={() => { setPage(totalPages); window.scrollTo(0,0); }} disabled={page===totalPages} className="btn btn-ghost btn-sm" style={{ fontSize:"0.76rem" }}>Last »</button>
+                <button onClick={() => { setPage(p => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }} disabled={page === totalPages} className="btn btn-ghost btn-sm" style={{ borderRadius: "var(--radius-pill)", padding: "0.4rem 1rem" }}>Next ›</button>
+                <button onClick={() => { setPage(totalPages); window.scrollTo({ top: 0, behavior: 'smooth' }); }} disabled={page === totalPages} className="btn btn-ghost btn-sm" style={{ borderRadius: "var(--radius-pill)", padding: "0.4rem 0.8rem", fontSize: "0.76rem" }}>»</button>
               </div>
             )}
 

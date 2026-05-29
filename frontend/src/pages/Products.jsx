@@ -65,9 +65,80 @@ export default function Products() {
           .filter-pill { flex-grow: 1; text-align: center; }
         }
       `}</style>
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 className="page-title">Collections</h1>
-        <p className="page-subtitle">Curated styles for every occasion</p>
+      <div style={{ position: 'relative', margin: '1rem 0 3rem 0', borderRadius: '24px', overflow: 'hidden' }}>
+        <button 
+          className="hero-nav-btn prev"
+          onClick={() => {
+            const carousel = document.getElementById('hero-carousel');
+            if (carousel) {
+              if (carousel.scrollLeft <= 10) {
+                carousel.scrollTo({ left: carousel.scrollWidth, behavior: 'smooth' });
+              } else {
+                carousel.scrollBy({ left: -carousel.clientWidth, behavior: 'smooth' });
+              }
+            }
+          }}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        
+        <div id="hero-carousel" className="hero-carousel-wrapper" style={{ overflowX: 'auto', display: 'flex', scrollSnapType: 'x mandatory' }}>
+          {[
+            { id: 'All', title: 'Elevate Your', titleSpan: 'Everyday Style', sub: 'Discover our new arrivals featuring premium fabrics, modern silhouettes, and timeless elegance designed just for you.', img: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=1000&auto=format&fit=crop' },
+            { id: 'Women', title: 'Women\'s', titleSpan: 'Elegance', sub: 'Discover graceful silhouettes and premium fabrics designed exactly to empower your personal style.', img: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1000&auto=format&fit=crop' },
+            { id: 'Men', title: 'Men\'s', titleSpan: 'Classics', sub: 'Refined menswear for the modern gentleman, featuring premium tailored fits and timeless style.', img: 'https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=1000&auto=format&fit=crop' },
+            { id: 'Kids', title: 'Playful', titleSpan: 'Kids', sub: 'Comfortable and stylish wear for the little ones, crafted with care for their active days.', img: 'https://images.unsplash.com/photo-1519278409-1f56fdda7fe5?q=80&w=1000&auto=format&fit=crop' },
+            { id: 'Accessories', title: 'Luxury', titleSpan: 'Accessories', sub: 'The perfect finishing touch to any outfit, crafted with exquisite detail and high-end materials.', img: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=1000&auto=format&fit=crop' }
+          ].map(item => (
+            <div key={item.id} className="hero-section" style={{ minWidth: '100%', scrollSnapAlign: 'start', flexShrink: 0, margin: 0, border: 'none', borderRadius: '24px', background: '#0a0a0b', boxSizing: 'border-box' }}>
+              <div className="hero-content" style={{ paddingLeft: '8%' }}>
+                <h1 className="hero-title">{item.title} <span>{item.titleSpan}</span></h1>
+                <p className="hero-subtitle">{item.sub}</p>
+                <button className="hero-btn" onClick={() => {
+                  setCategory(item.id);
+                  const filterBar = document.querySelector('.filter-bar');
+                  if (filterBar) {
+                    window.scrollTo({
+                      top: filterBar.offsetTop - 100,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}>
+                  Explore {item.id}
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+              </div>
+              <div className="hero-visual" style={{ paddingRight: '8%' }}>
+                <div className="hero-visual-glow"></div>
+                <img 
+                  src={item.img} 
+                  alt={item.id + " Collection"} 
+                  className="hero-img" 
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <button 
+          className="hero-nav-btn next"
+          onClick={() => {
+            const carousel = document.getElementById('hero-carousel');
+            if (carousel) {
+              const isAtEnd = carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 10;
+              if (isAtEnd) {
+                carousel.scrollTo({ left: 0, behavior: 'smooth' });
+              } else {
+                carousel.scrollBy({ left: carousel.clientWidth, behavior: 'smooth' });
+              }
+            }
+          }}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
       </div>
 
       <div className="filter-bar">
