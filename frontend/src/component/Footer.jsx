@@ -1,9 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Footer() {
   const { user } = useAuth();
+  const location = useLocation();
+
+  if (location.pathname.startsWith("/admin")) {
+    return null;
+  }
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 
@@ -246,6 +251,10 @@ export default function Footer() {
                   {label}
                 </a>
               ))}
+              <Link to="/admin/login" className="footer-link">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                Admin Portal
+              </Link>
             </div>
 
             {/* Contact snippet */}

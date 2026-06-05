@@ -9,8 +9,6 @@ export default function Register() {
   const { addToast } = useToast();
   const { user } = useAuth();
 
-  if (user) return <Navigate to="/products" replace />;
-
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState("");
   const [form, setForm] = useState({
@@ -19,6 +17,8 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  if (user) return <Navigate to="/products" replace />;
 
   const handleChange = e => {
     const { name, value } = e.target;

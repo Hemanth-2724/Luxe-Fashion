@@ -262,14 +262,18 @@ export default function Categories() {
       background: "var(--surface)",
       border: "1px solid var(--border)",
       borderRadius: "var(--radius-lg)",
-      padding: "1.5rem",
+      padding: "1.5rem 0.5rem 1.5rem 1.5rem",
       position: "sticky", top: 80,
       maxHeight: "calc(100vh - 100px)",
-      overflowY: "auto", overflowX: "hidden",
-      scrollbarWidth: "thin",
-      scrollbarColor: "var(--surface-3) transparent",
       animation: "slideInRight 0.4s ease",
+      display: "flex", flexDirection: "column"
     }}>
+      <div className="cat-sidebar-inner" style={{
+        overflowY: "auto", overflowX: "hidden",
+        paddingRight: "1rem", flex: 1,
+        scrollbarWidth: "thin",
+        scrollbarColor: "rgba(255,255,255,0.1) transparent",
+      }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.4rem" }}>
         <span style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontFamily: "'Cormorant Garamond', serif", fontSize: "1.2rem", fontWeight: 600 }}>
@@ -471,6 +475,7 @@ export default function Categories() {
           ))}
         </div>
       </FilterSection>
+      </div>
     </aside>
   );
 
@@ -480,6 +485,12 @@ export default function Categories() {
       <Navbar />
 
       <style>{`
+        /* Sidebar and Drawer Scrollbars */
+        .cat-sidebar-inner::-webkit-scrollbar, .cat-drawer::-webkit-scrollbar { width: 5px; }
+        .cat-sidebar-inner::-webkit-scrollbar-track, .cat-drawer::-webkit-scrollbar-track { background: transparent; }
+        .cat-sidebar-inner::-webkit-scrollbar-thumb, .cat-drawer::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 5px; }
+        .cat-sidebar-inner::-webkit-scrollbar-thumb:hover, .cat-drawer::-webkit-scrollbar-thumb:hover { background: rgba(232,180,160,0.4); }
+
         @keyframes dropdownScale {
           0%   { opacity: 0; transform: scale(0.95) translateY(-10px); }
           100% { opacity: 1; transform: scale(1)    translateY(0); }

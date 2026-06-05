@@ -642,57 +642,105 @@ h3 { font-size: 1.3rem; font-weight: 500; }
 .form-label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
 .form-input {
   width: 100%;
-  background: var(--bg-3);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.78rem 1rem;
+  background: rgba(19, 19, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem 1.2rem;
   color: var(--text);
   font-family: 'Outfit', sans-serif;
-  font-size: 0.92rem;
-  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+  font-size: 0.95rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   outline: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
-.form-input::placeholder { color: var(--text-3); }
+.form-input::placeholder { 
+  color: rgba(255, 255, 255, 0.25); 
+  transition: opacity 0.3s;
+}
+.form-input:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(19, 19, 26, 0.8);
+}
 .form-input:focus {
   border-color: var(--rose);
-  box-shadow: 0 0 0 3px rgba(232,180,160,0.12);
-  background: var(--bg-2);
+  box-shadow: 0 0 0 4px rgba(232, 180, 160, 0.15), 0 8px 24px rgba(0, 0, 0, 0.3);
+  background: var(--surface);
+}
+.form-input:focus::placeholder {
+  opacity: 0.5;
 }
 .form-input.error { border-color: var(--danger); }
 .form-error { color: var(--danger); font-size: 0.78rem; margin-top: 0.3rem; }
+
+/* ── NUMBER INPUTS (Hide Spinners) ─────────────────────── */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .form-select {
   width: 100%;
-  background: var(--bg-3);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.78rem 1rem;
+  background: rgba(19, 19, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem 1.2rem;
   color: var(--text);
   font-family: 'Outfit', sans-serif;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   outline: none;
   cursor: pointer;
-  transition: border-color var(--transition);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238a879a' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 1rem center;
+  background-position: right 1.2rem center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
-.form-select:focus { border-color: var(--rose); }
+.form-select:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  background-color: rgba(19, 19, 26, 0.8);
+}
+.form-select:focus { 
+  border-color: var(--rose); 
+  box-shadow: 0 0 0 4px rgba(232, 180, 160, 0.15), 0 8px 24px rgba(0, 0, 0, 0.3);
+  background-color: var(--surface);
+}
+
 .form-textarea {
   width: 100%;
-  background: var(--bg-3);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.78rem 1rem;
+  background: rgba(19, 19, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem 1.2rem;
   color: var(--text);
   font-family: 'Outfit', sans-serif;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   resize: vertical;
-  min-height: 85px;
+  min-height: 100px;
   outline: none;
-  transition: border-color var(--transition);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
-.form-textarea:focus { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(232,180,160,0.12); }
+.form-textarea:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(19, 19, 26, 0.8);
+}
+.form-textarea:focus { 
+  border-color: var(--rose); 
+  box-shadow: 0 0 0 4px rgba(232, 180, 160, 0.15), 0 8px 24px rgba(0, 0, 0, 0.3); 
+  background: var(--surface);
+}
+.form-textarea::-webkit-scrollbar { width: 6px; }
+.form-textarea::-webkit-scrollbar-track { background: transparent; }
+.form-textarea::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+.form-textarea::-webkit-scrollbar-thumb:hover { background: rgba(232,180,160,0.4); }
 
 .auth-divider { display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0; color: var(--text-3); font-size: 0.78rem; }
 .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }

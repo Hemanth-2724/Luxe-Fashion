@@ -1,3 +1,9 @@
+E:\EcommerceApp\backend\src\main\java\com\ecommerce\controller\AdminCheckServlet.java
+E:\EcommerceApp\backend\src\main\java\com\ecommerce\controller\AdminDashboardServlet.java
+E:\EcommerceApp\backend\src\main\java\com\ecommerce\controller\AdminLoginServlet.java
+E:\EcommerceApp\backend\src\main\java\com\ecommerce\controller\AdminLogoutServlet.java
+E:\EcommerceApp\backend\src\main\java\com\ecommerce\controller\AdminOrderServlet.java
+E:\EcommerceApp\backend\src\main\java\com\ecommerce\controller\AdminProductServlet.java
 E:\EcommerceApp\backend\src\main\java\com\ecommerce\controller\AuthCheckServlet.java
 E:\EcommerceApp\backend\src\main\java\com\ecommerce\controller\CancelOrderServlet.java
 E:\EcommerceApp\backend\src\main\java\com\ecommerce\controller\CartServlet.java
@@ -10,10 +16,12 @@ E:\EcommerceApp\backend\src\main\java\com\ecommerce\controller\ProfileServlet.ja
 E:\EcommerceApp\backend\src\main\java\com\ecommerce\controller\RegisterServlet.java
 E:\EcommerceApp\backend\src\main\java\com\ecommerce\controller\TestServlet.java
 E:\EcommerceApp\backend\src\main\java\com\ecommerce\controller\UpdateAddressServlet.java
+E:\EcommerceApp\backend\src\main\java\com\ecommerce\dao\AdminDAO.java
 E:\EcommerceApp\backend\src\main\java\com\ecommerce\dao\CartDAO.java
 E:\EcommerceApp\backend\src\main\java\com\ecommerce\dao\OrderDAO.java
 E:\EcommerceApp\backend\src\main\java\com\ecommerce\dao\ProductDAO.java
 E:\EcommerceApp\backend\src\main\java\com\ecommerce\dao\UserDAO.java
+E:\EcommerceApp\backend\src\main\java\com\ecommerce\model\Admin.java
 E:\EcommerceApp\backend\src\main\java\com\ecommerce\model\CartItem.java
 E:\EcommerceApp\backend\src\main\java\com\ecommerce\model\Order.java
 E:\EcommerceApp\backend\src\main\java\com\ecommerce\model\Product.java

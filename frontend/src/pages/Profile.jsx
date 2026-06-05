@@ -20,9 +20,6 @@ export default function Profile() {
     address: "",
     gender: ""
   });
-
-  if (!user) return null;
-
   useEffect(() => {
     fetch(`${BASE_URL}/profile`, { credentials: "include" })
       .then(res => {
@@ -69,6 +66,8 @@ export default function Profile() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  if (!user) return null;
 
   const handleSave = async () => {
     setSaving(true);

@@ -5,6 +5,7 @@ import { useToast } from "../context/ToastContext";
 import BASE_URL from "../api";
 
 export default function Login() {
+  // Hooks must be called before conditional returns
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -133,6 +134,13 @@ export default function Login() {
         <p style={{ textAlign: "center", marginTop: "1rem" }}>
           <Link to="/products" style={{ fontSize: "0.82rem", color: "var(--text-3)", textDecoration: "none" }}>
             ← Continue browsing without signing in
+          </Link>
+        </p>
+
+        {/* Admin Login Link */}
+        <p style={{ textAlign: "center", marginTop: "1.5rem" }}>
+          <Link to="/admin/login" style={{ fontSize: "0.82rem", color: "var(--text-3)", textDecoration: "underline" }}>
+            Admin Login
           </Link>
         </p>
       </div>
