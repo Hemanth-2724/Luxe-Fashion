@@ -5,7 +5,6 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.WebServlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 import com.google.gson.Gson;
 

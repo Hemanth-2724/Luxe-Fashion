@@ -6,7 +6,6 @@ import jakarta.servlet.annotation.WebServlet;
 
 import java.io.IOException;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import com.ecommerce.dao.UserDAO;
 import com.ecommerce.model.User;
