@@ -6,6 +6,14 @@ import Navbar from "../component/Navbar";
 /* ── constants ──────────────────────────────────────────── */
 const GENDER_TABS = ["All", "Women", "Men", "Kids", "Accessories"];
 
+const CATEGORY_BESTSELLERS = {
+  All: "Men Denim Jacket",
+  Women: "Women Kurti",
+  Men: "Men Denim Jacket",
+  Kids: "Kids Printed Tee",
+  Accessories: "Sunglasses",
+};
+
 const PRICE_RANGES = [
   { label: "Under ₹500",       min: 0,    max: 500   },
   { label: "₹500 – ₹1,000",   min: 500,  max: 1000  },
@@ -248,6 +256,42 @@ export default function Categories() {
 
   const toggleSize = s =>
     setSelectedSizes(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
+
+  const getCategoryHighlights = () => {
+    if (!allProducts.length) return null;
+
+    const catProducts = genderTab === "All"
+      ? allProducts
+      : allProducts.filter(p => getGender(p).toLowerCase() === genderTab.toLowerCase());
+
+    if (catProducts.length === 0) return null;
+
+    const highestPriceProd = catProducts.reduce((max, p) => (p.price > max.price ? p : max), catProducts[0]);
+    const lowestPriceProd = catProducts.reduce((min, p) => (p.price < min.price ? p : min), catProducts[0]);
+
+    const targetName = CATEGORY_BESTSELLERS[genderTab] || "";
+    let bestSellerProd = catProducts.find(p => {
+      const n = (p.productName || p.product_name || "").toLowerCase();
+      return targetName && n.includes(targetName.split(" ")[0].toLowerCase());
+    });
+
+    if (!bestSellerProd) {
+      bestSellerProd = catProducts.reduce((best, p) => {
+        const bd = best.discountPercent || best.discount_percent || 0;
+        const pd = p.discountPercent || p.discount_percent || 0;
+        return pd > bd ? p : best;
+      }, catProducts[0]);
+    }
+
+    return {
+      highest: highestPriceProd,
+      lowest: lowestPriceProd,
+      bestseller: bestSellerProd,
+    };
+  };
+
+  const highlights = getCategoryHighlights();
+
 
   /* Simulate a star rating per product */
   const getStars = (productId) => {
@@ -586,6 +630,76 @@ export default function Categories() {
 
           {/* ── Content ── */}
           <div style={{ flex:1, minWidth:0 }}>
+
+            {highlights && (
+              <div className="category-highlights" style={{ marginTop: 0, marginBottom: "2rem" }}>
+                <div className="ch-header">
+                  <h2 className="ch-title">{genderTab} Collection Showcase</h2>
+                  <p className="ch-subtitle">Discover the top highlights, best values, and premium picks in {genderTab}</p>
+                </div>
+                <div className="ch-grid">
+                  {/* Card 1: Best Seller */}
+                  <Link to={`/product/${highlights.bestseller.productId || highlights.bestseller.product_id || highlights.bestseller.id}`} className="ch-card ch-card-bestseller">
+                    <div className="ch-badge ch-badge-yellow">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                      Best Seller
+                    </div>
+                    <div className="ch-card-body">
+                      <img className="ch-card-img" src={highlights.bestseller.imageUrl || highlights.bestseller.image_url} alt={highlights.bestseller.productName || highlights.bestseller.product_name} />
+                      <div className="ch-card-info">
+                        <h4 className="ch-prod-name">{highlights.bestseller.productName || highlights.bestseller.product_name}</h4>
+                        <div className="ch-price-row">
+                          <span className="ch-price-final">₹{discountedPrice(highlights.bestseller)}</span>
+                          {(highlights.bestseller.discountPercent || highlights.bestseller.discount_percent) > 0 && (
+                            <span className="ch-price-orig">₹{highlights.bestseller.price}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+
+                  {/* Card 2: Lowest Price (Minimum Amount) */}
+                  <Link to={`/product/${highlights.lowest.productId || highlights.lowest.product_id}`} className="ch-card ch-card-lowest">
+                    <div className="ch-badge ch-badge-green">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                      Best Value (Lowest Price)
+                    </div>
+                    <div className="ch-card-body">
+                      <img className="ch-card-img" src={highlights.lowest.imageUrl || highlights.lowest.image_url} alt={highlights.lowest.productName || highlights.lowest.product_name} />
+                      <div className="ch-card-info">
+                        <h4 className="ch-prod-name">{highlights.lowest.productName || highlights.lowest.product_name}</h4>
+                        <div className="ch-price-row">
+                          <span className="ch-price-final">₹{discountedPrice(highlights.lowest)}</span>
+                          {(highlights.lowest.discountPercent || highlights.lowest.discount_percent) > 0 && (
+                            <span className="ch-price-orig">₹{highlights.lowest.price}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+
+                  {/* Card 3: Highest Price */}
+                  <Link to={`/product/${highlights.highest.productId || highlights.highest.product_id}`} className="ch-card ch-card-highest">
+                    <div className="ch-badge ch-badge-rose">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                      Premium Pick (Highest Price)
+                    </div>
+                    <div className="ch-card-body">
+                      <img className="ch-card-img" src={highlights.highest.imageUrl || highlights.highest.image_url} alt={highlights.highest.productName || highlights.highest.product_name} />
+                      <div className="ch-card-info">
+                        <h4 className="ch-prod-name">{highlights.highest.productName || highlights.highest.product_name}</h4>
+                        <div className="ch-price-row">
+                          <span className="ch-price-final">₹{discountedPrice(highlights.highest)}</span>
+                          {(highlights.highest.discountPercent || highlights.highest.discount_percent) > 0 && (
+                            <span className="ch-price-orig">₹{highlights.highest.price}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            )}
 
             {/* Toolbar */}
             <div style={{ display:"flex", alignItems:"center", gap:"0.75rem", marginBottom:"1.2rem", flexWrap:"wrap" }}>
